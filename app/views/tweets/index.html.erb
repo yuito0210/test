@@ -1,0 +1,37 @@
+<h1>Toshiya</h1>
+<h3>一覧ページ</h3>
+<%= link_to "新規投稿へ", new_tweet_path %>
+<div class="tweets-container">
+    <% @tweets.each do |t| %>
+        <div class="tweet">
+            <%= image_tag t.image_url, size: "250x200" if t.image? %>
+            <%= t.name %>
+            <%= t.address %>
+            <%= t.about %>
+            <%= t.user.email %>
+            <% if user_signed_in? %>
+                <% if current_user.already_liked?(t) %>
+                    <%= link_to tweet_like_path(id: t.id, tweet_id: t.id), method: :delete do %>
+                        <i class="fas fa-heart"></i><%= t.likes.count %>                    <% end %>
+                <% else %>
+                    <%= link_to tweet_likes_path(id: t.id, tweet_id: t.id), method: :post do %>
+                        <i class="fas fa-heart"></i><%= t.likes.count %>                <% end %>
+            <% end %>
+            <% else %>
+                <i class="fas fa-heart"></i><%= t.likes.count %>            <% end %>
+            <%= link_to "詳細へ", tweet_path(t.id) %>
+        </div>
+    <% end %>
+
+<%= form_tag tweets_path, method: :get, class: 'boards__searchForm' do %>
+    <%= select_tag :tag_id,
+        options_from_collection_for_select(Tag.all, :id, :name, params[:tag_id]),
+        {
+            prompt: 'ジャンルを絞る',
+            onchange: 'submit(this.form);'
+        }
+%>
+<% end %>
+
+
+</div>
